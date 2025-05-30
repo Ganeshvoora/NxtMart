@@ -1,103 +1,84 @@
-import Image from "next/image";
+"use client";
+import { useState, useContext, useEffect } from "react";
+import Item from "@/components/Item";
+import { cartContext } from "@/context/context";
+import categoriesOrder from "@/data/categories";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+// Types for cart items
+// Define types that match your data structure
+type Product = {
+  id: number;         // Note: API returns numeric IDs
+  name: string;
+  image: string;
+  price: string;
+  weight: string;
+};
+
+type Category = {
+  name: string;
+  products: Product[];
+};
+type CartItem = {
+  id: number;
+  name: string;
+  image: string;
+  price: string;
+  weight?: string;
+  quantity: number;
+};
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const { cart } = useContext(cartContext);
+  const [items, setItems] = useState<Category[]>([]);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    const fetchData = async () => {
+      const url = "/api/products";
+      const response = await fetch(url);
+      const data = await response.json();
+      setItems(data.categories);
+    };
+    fetchData();
+  }, []);
+  return (
+    <div>
+      <Navbar />
+      <div className="flex flex-col lg:flex-row">
+        <div className="w-screen lg:w-[15vw] h-[10vh] lg:h-screen py-2 px-3.5 flex lg:flex-col items-center overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+          <h1>Categories</h1>
+          {
+            categoriesOrder.map((cat) => (
+              <a href={cat === "All" ? "#" : `#${cat.replaceAll(" ", "").replaceAll("&", "").replaceAll(",", "")}`} key={cat === "All" ? "#" : `#${cat.replaceAll(" ", "").replaceAll("&", "").replaceAll(",", "")}`}>
+                <button className="focus:bg-green-800 focus:text-white p-2 rounded-lg bg-transparent border-none m-2"
+                >
+                  {cat}
+                </button>
+              </a>
+            ))
+          }
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <div className="w-screen lg:w-[85vw] h-[90vh] lg:h-screen p-8 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
+          {
+            items.map((item) => (
+              <div key={item.name} id={item.name.replaceAll(" ", "").replaceAll("&", "").replaceAll(",", "")}>
+                <h1 className="text-2xl font-bold my-4">{item.name}</h1>
+                <div className="flex overflow-auto " style={{ scrollbarWidth: "none" }}>
+                  {item.products.map((i) => {
+                    // Find quantity in cart (if exists) without mutating original data
+                    const cartQuantity = cart.find((c: CartItem) => c.id === i.id)?.quantity;
+                    console.log(cartQuantity);
+                    return <Item key={i.id} item={i} quantity={cartQuantity} />;
+                  })}
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+      <Footer />
+
     </div>
+
   );
 }

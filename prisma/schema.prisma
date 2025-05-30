@@ -1,0 +1,31 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL") 
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  email    String @unique
+  username String @unique
+  password String
+}
+
+model Category {
+  id        String    @id @map("_id") @default(auto()) @db.ObjectId
+  name      String
+  products  Product[]  // MongoDB doesn't use relation in the same way for nested arrays
+}
+
+model Product {
+  id         String   @id @map("_id") @default(auto()) @db.ObjectId
+  name       String
+  weight     String
+  price      String
+  image      String
+  categoryId String   @db.ObjectId // Store the category reference here
+  category   Category @relation(fields: [categoryId], references: [id])  // Relationship with category using the categoryId
+}
