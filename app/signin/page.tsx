@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { signIn } from "next-auth/react";
 
 
-const signin = () => {
+const Signin = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -47,10 +47,11 @@ const signin = () => {
                     </div>
                     <button type="submit" className='bg-blue-500 text-white py-2 px-4 rounded w-full' onClick={handleSubmit}>Sign In</button>
                 </form>
+                <p>{error}</p>
             </div>
 
         </div>
     )
 }
 
-export default signin
+export default Signin

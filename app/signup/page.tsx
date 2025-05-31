@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const signup = () => {
+const Signup = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [email, setEmail] = useState("");
@@ -56,10 +56,11 @@ const signup = () => {
                     </div>
                     <button type="submit" className='bg-blue-500 text-white py-2 px-4 rounded w-full' onClick={handleSubmit}>Sign Up</button>
                 </form>
+                <p>{error}</p>
             </div>
 
         </div>
     )
 }
 
-export default signup
+export default Signup

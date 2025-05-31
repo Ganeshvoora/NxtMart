@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
+import {NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 // GET handler to find product by ID
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -15,8 +15,8 @@ export async function GET(
     // Find product by ID
     const product = await prisma.product.findUnique({
       where: {
-        id: productId
-      }
+        id: productId,
+      },
     });
 
     // If product not found, return 404 error
